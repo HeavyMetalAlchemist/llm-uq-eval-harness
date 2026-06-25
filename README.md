@@ -194,34 +194,6 @@ Then add `my_metric` to the `metrics` list in your config.
 
 ---
 
-## Project structure
-
-```
-llm_uq/
-├── cli.py           # Typer CLI - run, eval, report subcommands
-├── config.py        # Pydantic config models, YAML loading
-├── engine.py        # Model loading + chunked inference with token stats
-├── datasets/
-│   ├── loader.py    # HuggingFace or CSV dataset loader
-│   └── scoring.py   # Correctness scoring: numeric, exact_match, contains, f1, cosine
-├── metrics/
-│   ├── base.py      # BaseMetric ABC - plugin interface
-│   ├── builtin.py   # Built-in metrics: brier, ece, auroc, entropy, std_logp, risk_coverage
-│   └── registry.py  # register_metric(), get_metric()
-└── report.py        # 9 plot functions + self-contained HTML report builder
-
-configs/
-├── gsm8k_example.yaml
-├── triviaqa_example.yaml
-└── custom_example.yaml
-
-docs/
-├── gsm8k_report.html      # Full calibration report, Phi-3 on GSM8K
-└── triviaqa_report.html   # Full calibration report, Phi-3 on TriviaQA
-```
-
----
-
 ## Recommended workflow for GPU instances
 
 Inference is expensive. The pipeline is designed so you only run it once:
