@@ -1,0 +1,39 @@
+model:
+  name: microsoft/Phi-3-mini-4k-instruct
+  quantize_4bit: true
+  device_map: auto
+  max_new_tokens: 512
+  chunk_size: 128
+
+dataset:
+  source: huggingface
+  name: gsm8k
+  hf_config: main
+  split: "test[:500]"
+  input_col: question
+  output_col: answer
+  seed: 42
+  n_samples: 200
+  scoring: numeric
+
+prompt:
+  system: |
+    You are a careful math solver. Be concise in your output.
+    Let NUMBER be the numeric value of the quantity the question asks for (no units or symbols).
+    Print the resulting number exactly in the format: FINAL: <NUMBER>
+    Then on a new line write: END
+    Do not output anything after END.
+
+metrics:
+  - confidence
+  - brier
+  - ece
+  - auroc
+  - entropy
+  - std_logp
+  - risk_coverage
+
+output:
+  format: html
+  path: ./gsm8k_report.html
+  save_csv: true

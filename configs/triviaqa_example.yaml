@@ -1,0 +1,38 @@
+model:
+  name: microsoft/Phi-3-mini-4k-instruct
+  quantize_4bit: true
+  device_map: auto
+  max_new_tokens: 64
+  chunk_size: 64
+
+dataset:
+  source: huggingface
+  name: trivia_qa
+  hf_config: rc
+  split: "validation[:2000]"
+  input_col: question
+  output_col: answer
+  seed: 42
+  n_samples: 500
+  scoring: contains
+
+prompt:
+  system: |
+    You are a factual QA assistant.
+    Return ONLY the answer span (a short phrase).
+    No explanations, no punctuation, no quotes, no extra words, no newlines.
+    If you are unsure, output: unknown
+
+metrics:
+  - confidence
+  - brier
+  - ece
+  - auroc
+  - entropy
+  - std_logp
+  - risk_coverage
+
+output:
+  format: html
+  path: ./triviaqa_report.html
+  save_csv: true

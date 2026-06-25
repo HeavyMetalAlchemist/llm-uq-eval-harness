@@ -1,0 +1,50 @@
+# Example: run against your own CSV dataset with any HuggingFace causal LM.
+#
+# Your CSV must have at minimum:
+#   - an input column (the question / prompt sent to the model)
+#   - an output column (the ground truth answer)
+#
+# Set scoring to the mode that best fits your task:
+#   numeric       — math / calculation tasks (extracts the last number)
+#   exact_match   — strict span QA
+#   contains      — flexible span QA (answer appears anywhere in prediction)
+#   f1            — token-level F1 (standard QA benchmarks)
+#   cosine        — semantic similarity via sentence-transformers
+
+model:
+  name: microsoft/Phi-3-mini-4k-instruct   # swap for any HF causal LM
+  quantize_4bit: true
+  device_map: auto
+  max_new_tokens: 128
+  chunk_size: 128
+
+dataset:
+  source: csv
+  name: ./my_dataset.csv        # path to your CSV file
+  input_col: question           # column name for the input text
+  output_col: gold_answer       # column name for the ground truth
+  seed: 42
+  n_samples: 100
+  scoring: contains             # change to match your task
+
+prompt:
+  system: |
+    You are a helpful assistant.
+    Answer the question concisely with only the key fact.
+    No explanations, no punctuation, no extra words.
+  # Alternatively, write your prompt in a separate file:
+  # system_file: ./my_prompt.txt
+
+metrics:
+  - confidence
+  - brier
+  - ece
+  - auroc
+  - entropy
+  - std_logp
+  - risk_coverage
+
+output:
+  format: html
+  path: ./custom_report.html
+  save_csv: true
