@@ -1,6 +1,6 @@
 # LLM Uncertainty Quantification Eval Harness
 
-A config-driven CLI tool for **token-level uncertainty quantification** of HuggingFace causal language models. Point it at any model, any dataset, and a system prompt — it runs inference, computes calibration metrics, and generates a self-contained HTML report.
+A config-driven CLI tool for **token-level uncertainty quantification** of HuggingFace causal language models. Point it at any model, any dataset, and a system prompt - it runs inference, computes calibration metrics, and generates a self-contained HTML report.
 
 Built on top of the research documented in the companion notebook repo: [llm-uncertainty-quantification](https://github.com/HeavyMetalAlchemist/llm-uncertainty-quantification), which covers the full methodology and findings for Phi-3-Mini-4k-Instruct on GSM8K and TriviaQA.
 
@@ -16,16 +16,16 @@ For each model response, the tool captures:
 - Chosen token probability, and its minimum position
 
 **Sequence-level signals**
-- Confidence — geometric mean of chosen token probabilities
+- Confidence - geometric mean of chosen token probabilities
 - Mean token entropy across the full sequence
 - Std of log-probabilities (global and last-k tokens)
 
 **Calibration metrics** (computed against correctness labels)
 - Accuracy, Brier score, ECE (Expected Calibration Error)
-- AUROC — how well uncertainty separates correct from incorrect predictions
+- AUROC - how well uncertainty separates correct from incorrect predictions
 - Risk-coverage curves (selective prediction / abstention)
 
-**Output:** a single self-contained HTML report with 9 embedded plots. No external images, no server required — open it in any browser.
+**Output:** a single self-contained HTML report with 9 embedded plots. No external images, no server required - open it in any browser.
 
 ---
 
@@ -33,7 +33,7 @@ For each model response, the tool captures:
 
 Evaluated on **Phi-3-Mini-4k-Instruct (4-bit quantized)**.
 
-### GSM8K — Math Reasoning (200 samples)
+### GSM8K - Math Reasoning (200 samples)
 
 | Metric | Value |
 |---|---|
@@ -45,7 +45,7 @@ Evaluated on **Phi-3-Mini-4k-Instruct (4-bit quantized)**.
 
 Key finding: uncertainty signals rank errors well (AUROC ~0.75). Abstaining on the least confident 20% raises accuracy from 78% to 86%.
 
-### TriviaQA — Factual QA (500 samples)
+### TriviaQA - Factual QA (500 samples)
 
 | Metric | Value |
 |---|---|
@@ -55,7 +55,7 @@ Key finding: uncertainty signals rank errors well (AUROC ~0.75). Abstaining on t
 | AUROC (1 − confidence) | 0.834 |
 | AUROC (mean token entropy) | 0.836 |
 
-Key finding: strong error detection (AUROC ~0.83) but poor calibration (ECE ~0.26). The model is overconfident on factual recall — uncertainty ranks errors well but confidence scores cannot be trusted as probabilities.
+Key finding: strong error detection (AUROC ~0.83) but poor calibration (ECE ~0.26). The model is overconfident on factual recall - uncertainty ranks errors well but confidence scores cannot be trusted as probabilities.
 
 See the full analysis in [`docs/gsm8k_report.html`](docs/gsm8k_report.html) and [`docs/triviaqa_report.html`](docs/triviaqa_report.html).
 
@@ -145,9 +145,9 @@ output:
 
 | Mode | Use case |
 |---|---|
-| `numeric` | Math / calculation tasks — extracts the last number from output |
-| `exact_match` | Strict span QA — normalized string equality |
-| `contains` | Flexible span QA — gold answer appears anywhere in prediction |
+| `numeric` | Math / calculation tasks - extracts the last number from output |
+| `exact_match` | Strict span QA - normalized string equality |
+| `contains` | Flexible span QA - gold answer appears anywhere in prediction |
 | `f1` | Token-level F1 against best gold alias |
 | `cosine` | Semantic similarity via sentence-transformers |
 
@@ -174,7 +174,7 @@ See [`configs/custom_example.yaml`](configs/custom_example.yaml) for a full temp
 
 ## Adding a custom metric (plugin interface)
 
-Implement `BaseMetric` and register it — no changes to core code required:
+Implement `BaseMetric` and register it - no changes to core code required:
 
 ```python
 from llm_uq.metrics.base import BaseMetric, MetricResult
@@ -198,14 +198,14 @@ Then add `my_metric` to the `metrics` list in your config.
 
 ```
 llm_uq/
-├── cli.py           # Typer CLI — run, eval, report subcommands
+├── cli.py           # Typer CLI - run, eval, report subcommands
 ├── config.py        # Pydantic config models, YAML loading
 ├── engine.py        # Model loading + chunked inference with token stats
 ├── datasets/
 │   ├── loader.py    # HuggingFace or CSV dataset loader
 │   └── scoring.py   # Correctness scoring: numeric, exact_match, contains, f1, cosine
 ├── metrics/
-│   ├── base.py      # BaseMetric ABC — plugin interface
+│   ├── base.py      # BaseMetric ABC - plugin interface
 │   ├── builtin.py   # Built-in metrics: brier, ece, auroc, entropy, std_logp, risk_coverage
 │   └── registry.py  # register_metric(), get_metric()
 └── report.py        # 9 plot functions + self-contained HTML report builder
